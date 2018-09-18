@@ -9,11 +9,15 @@ app.use('/devices', deviceRouter);
 app.get('/api/login', (req, res) => {
   res.send({ user: 'parent' });
 });
-/*app.get('/api/device-list', (req, res) => {
-  res.send({devices:[ {id: 1, devicename: 'roku', status: 'unpaused'},
-  {id: 2, devicename: 'roku', status: 'unpaused'},
-  {id: 3, devicename: 'roku', status: 'unpaused'}]});
 
-});*/
+if (process.env.NODE_ENV === 'production') {
+    // Serve any static files
+    app.use(express.static(path.join(__dirname, 'client/build')));
+    // Handle React routing, return all requests to React app
+    app.get('*', function(req, res) {
+        res.sendFile(path.join(__dirname, '/../client/build', 'index.html'));
+    });
+}
+    //
 app.listen(port, () => console.log(`Listening on port ${port}`));
 

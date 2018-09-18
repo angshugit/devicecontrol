@@ -4,7 +4,6 @@ var router = express.Router();
 var device_controller = require('../controllers/devicecontroller');
 
 // GET device home page.
-//router.get('/', device_controller.index);
 router.get('/', device_controller.device_list);
 //
 // POST request for creating device.

@@ -24,9 +24,9 @@ exports.device_add_on_post = function(req, res) {
     var postData = req.body,
     validationError = { type: 'Validation Error', message: '' };
 
-    if (!postData.macaddress) {
-        validationError.message = 'Mac Address is required';
-    }
+    // if (!postData.macaddress) {
+    //     validationError.message = 'Mac Address is required';
+    // }
     if (!postData.devicename) {
         validationError.message = 'Device Name is required';
     }

@@ -1,15 +1,27 @@
 const express = require('express');
 const path = require('path');
+const  bodyParser = require('body-parser');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+
 const port = process.env.PORT || 5000;
 
-const  bodyParser = require('body-parser');
-
 const app = express();
+
+// enhance your app security with Helmet
+app.use(helmet());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+
+// enable all CORS requests
+app.use(cors());
+//
+// log HTTP requests
+app.use(morgan('combined'));
 
 var deviceRouter = require('./routes/device');
 app.use('/devices', deviceRouter);

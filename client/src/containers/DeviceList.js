@@ -1,4 +1,5 @@
 // TODO: onClickToggleStatus use bind instead
+// mention that EDIT is done on double click only
 // CHANGE deviocename to deviceName
 // GET RID OF EXTRA devices
 // GET RID OF UNNECESSARY ITEMS IN STATE
@@ -20,10 +21,12 @@ class DeviceList extends Component {
   constructor(props) {
     super(props);
   }
-  state = { authenticatedUser: null, devices: null, showAddDeviceModal: false, newDeviceName: '',
-  newDeviceStatus: 'Paused'
-};
-
+  state = { authenticatedUser: null,
+            devices: null,
+            showAddDeviceModal: false,
+            newDeviceName: '',
+            newDeviceStatus: 'Paused'
+    };
   componentDidMount() {
     if (this.props.history.location.state.user === "parent") {
       this.setState({
@@ -139,7 +142,7 @@ class DeviceList extends Component {
    * @param {*} cellName
    */
   onAfterSaveCell(row, cellName, cellValue) {
-    axios .put(`/devices/${row._id}`, {
+    axios.put(`/devices/${row._id}`, {
       devicename: cellValue
     }).then(response => {
       console.log(response);
@@ -171,16 +174,19 @@ class DeviceList extends Component {
         status: this.state.newDeviceStatus
     })
     .then(response => {
-      if (response.data.devices) {
-        this.setState({
-          devices: response.data.devices
-        });
+      if (response.data.devicename) {
+        const data = response.data;
+        const newdevice = {devicename: data.devicename, status: data.status, _id: data._id};
+        this.setState(previousState => ({
+          devices: [...this.state.devices, newdevice]
+      }));
+        this.setState({ showAddDeviceModal: false });
       }
     })
     .catch(error => {
       console.log(error);
+      this.setState({ showAddDeviceModal: false });
     });
-    this.setState({ showAddDeviceModal: false });
   }
 
   render() {
@@ -201,7 +207,7 @@ class DeviceList extends Component {
     ];
     const cellEditProp = {
       mode: "dbclick",
-      blurToSave: true,
+      blxurToSave: true,
       afterSaveCell: this.onAfterSaveCell
     };
     return (

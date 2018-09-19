@@ -24,6 +24,11 @@ app.use(cors());
 app.use(morgan('combined'));
 
 var deviceRouter = require('./routes/device');
+var userRouter = require('./routes/user');
+var sessionRouter = require('./routes/session');
+
+app.use('/session', sessionRouter);
+app.use('/users', userRouter);
 app.use('/devices', deviceRouter);
 
 app.get('/api/login', (req, res) => {

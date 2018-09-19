@@ -20,13 +20,9 @@ exports.device_list = function(req, res) {
 //
 // Handle device create on POST.
 exports.device_add_on_post = function(req, res) {
-   // To Do : We must not add same device multiple times, so check if it's in the DB or not
     var postData = req.body,
     validationError = { type: 'Validation Error', message: '' };
 
-    // if (!postData.macaddress) {
-    //     validationError.message = 'Mac Address is required';
-    // }
     if (!postData.devicename) {
         validationError.message = 'Device Name is required';
     }
@@ -34,13 +30,28 @@ exports.device_add_on_post = function(req, res) {
         res.json(validationError);
         return;
     }
-    devicesModel.insert(postData, function(err, newDevice) {
+    devicesModel.findOne({ devicename: postData.devicename }, function(err, device) {
         if (err) {
             res.send(err);
+            console.log('Error finding device');
             return;
         }
-
-        res.json(newDevice);
+        if (device) {
+            res.json({ type: 'error',
+                       message: 'Device already exists with "devicename" of "'
+                       + postData.devicename + '".' });
+            return;
+        }
+        if (device === null) {
+            devicesModel.insert(postData, function(err, newDevice) {
+                if (err) {
+                    res.send(err);
+                    return;
+                }
+                console.log(newDevice);
+                res.json(newDevice);
+            });
+        }
     });
 };
 

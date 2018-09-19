@@ -1,0 +1,20 @@
+CLIENT
+############
+// TODO: onClickToggleStatus use bind instead
+// standardize this.state or set it inside code
+// mention that EDIT is done on double click only
+// cannot save with BLANK DEVICENAME
+// CHANGE deviocename to deviceName
+// GET RID OF EXTRA devices
+// GET RID OF UNNECESSARY ITEMS IN STATE
+// PUT BACK closeButton IN MODAL HEADER
+// ADD FormControl and labelControl in modal
+// CHANGE 'Paused' to 'paused' and same for 'unpaused'
+//  show spinner toggling status
+// how to get authenticated role
+
+
+SERVER
+#############
+- no need for mac address
+- add new item- provide a check so that the same devicename is not added twice

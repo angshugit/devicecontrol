@@ -1,5 +1,9 @@
 
 var usersModel = require('../models/userModel.js');
+//var authToken = require('./authToken');
+var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+//var bcrypt = require('bcryptjs');
+var config = require('../config'); // 
 
 exports.session_login_on_post = function(req, res) {
     var postData = req.body,
@@ -11,18 +15,18 @@ exports.session_login_on_post = function(req, res) {
         validationError.message = 'Password is required';
     }
     if (validationError.message) {
-        res.json(validationError);
+        res.status(400).json(validationError);
         return;
     }
 
     usersModel.findOne({ username: postData.username }, function(err, user) {
         if (err) {
-            res.send(err);
+            res.status(500).send(err);
             console.log('Error finding user');
             return;
         }
         if (user === null) {
-            res.json({ type: 'error',
+            res.status(404).json({ auth: false,
                        message: 'No user with "username" of "'
                        + postData.username + '".' });
             return;
@@ -30,13 +34,17 @@ exports.session_login_on_post = function(req, res) {
         // check if password matches
         if (user.password != postData.password) {
             console.log('Password not matching');
-            res.json({ type: 'error',
+            res.status(401).json({ auth: false,
                        message: 'password not correct' });
             return;
         }
+
         console.log('login successful');
+        var token = jwt.sign({ id: user._id }, config.salt, {
+                expiresIn: 120 // expires in 2 minutes 
+        });
         // if yes, send success and role from database 
-        res.json({ type: 'success',
+        res.status(200).json({ auth: true, token: token,
                    role: user.role });
     });
 };
@@ -44,5 +52,5 @@ exports.session_login_on_post = function(req, res) {
 exports.session_logout_on_delete = function(req, res) {
     // What to do? remove a session from session DB
     // What about timeout ?
-    res.send('NOT IMPLEMENTED: logout');
+    res.status(200).json({ auth: false, token: null });
 };

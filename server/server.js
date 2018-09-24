@@ -4,6 +4,9 @@ const  bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+//const cookieParser = require('cookie-parser');
+//const session = require('express-session');
+var authToken = require('./controllers/authToken');
 
 const port = process.env.PORT || 5000;
 
@@ -23,13 +26,22 @@ app.use(cors());
 // log HTTP requests
 app.use(morgan('combined'));
 
+//app.use(cookieParser());
+
+app.use(function(req, res, next) {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+    res.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+    res.setHeader("Expires", "0");
+    next();
+});
+
 var deviceRouter = require('./routes/device');
 var userRouter = require('./routes/user');
 var sessionRouter = require('./routes/session');
 
 app.use('/session', sessionRouter);
 app.use('/users', userRouter);
-app.use('/devices', deviceRouter);
+app.use('/devices', authToken, deviceRouter);
 
 app.get('/api/login', (req, res) => {
   res.send({ user: 'parent' });

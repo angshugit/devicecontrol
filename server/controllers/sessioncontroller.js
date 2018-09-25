@@ -40,7 +40,7 @@ exports.session_login_on_post = function(req, res) {
         }
 
         console.log('login successful');
-        var token = jwt.sign({ id: user._id }, config.salt, {
+        var token = jwt.sign({ "id": user._id, "role": user.role }, config.salt, {
                 expiresIn: 120 // expires in 2 minutes 
         });
         // if yes, send success and role from database 

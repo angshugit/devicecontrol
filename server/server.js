@@ -36,11 +36,11 @@ app.use(function(req, res, next) {
 });
 
 var deviceRouter = require('./routes/device');
-var userRouter = require('./routes/user');
+//var userRouter = require('./routes/user');
 var sessionRouter = require('./routes/session');
 
 app.use('/session', sessionRouter);
-app.use('/users', userRouter);
+//app.use('/users', userRouter);
 app.use('/devices', authToken, deviceRouter);
 
 app.get('/api/login', (req, res) => {

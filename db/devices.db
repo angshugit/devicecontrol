@@ -1,16 +1,5 @@
 {"devicename":"arka","status":"Paused","_id":"0s5CTwOss7IEjN8T"}
 {"devicename":"Amazon Echo","status":"unpaused","_id":"45y0aGQ2hLfKWyUa"}
-{"devicename":"alexa2","status":"Unpaused","_id":"Ao3PVWxcpXqDGoge"}
-{"devicename":"raka","status":"Unpaused","_id":"CdrJ81uc485KFuoC"}
-{"devicename":"ujjaini","status":"Paused","_id":"EDmJZD2CYVS0V37G"}
-{"devicename":"ujjaini","status":"Paused","_id":"Lfh7SlOW854T4F8s"}
-{"devicename":"roku","status":"unpaused","_id":"NTwZapXWbqUR08AR"}
-{"devicename":"amica","status":"Unpaused","_id":"Vu6fH4J6EHt1clXp"}
-{"devicename":"sonodyne","status":"Paused","_id":"e9ZkradZxZ6GbVJj"}
-{"devicename":"ujjaini","status":"Paused","_id":"gGmZScz30j8mKNpR"}
-{"devicename":"ujjaini","status":"Paused","_id":"kIsRuIoLE5hWPSN1"}
-{"devicename":"anika","status":"Paused","_id":"tEtMFrpxnt14i4Ha"}
-{"devicename":"ujjaini","status":"Paused","_id":"xCZz3cHOJJ2ifjQz"}
-{"devicename":"sonodyne","status":"Paused","_id":"yFkt3WoHQAx4AvAJ"}
-{"devicename":"sonodyne","status":"Paused","_id":"yZxII5IJUQbLz2hL"}
-{"devicename":"sonodyne","status":"Paused","_id":"ysditzICLMxGN4mC"}
+{"devicename":"alexa2","status":"PAUSED","_id":"Ao3PVWxcpXqDGoge"}
+{"devicename":"roku","status":"PAUSED","_id":"ZHUAIYowfxkwUdJP"}
+{"devicename":"chromecast","status":"UNPAUSED","_id":"bO882geDwksyVLwj"}

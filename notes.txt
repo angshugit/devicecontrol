@@ -1,8 +1,14 @@
 CLIENT
 ############
 // TODO: onClickToggleStatus use bind instead
+// HEIGHT should not be 900px ????
+// loading icon showing
+// * .: You tried to redirect to the same route you're currently on: "/login"Va;idation with react with errors https://blog.stvmlbrn.com/2017/01/16/form-validation-with-react.html
+* Form Username and password is getting pregfilled
+Form validation - https://learnetto.com/blog/how-to-do-simple-form-validation-in-reactjs
 // standardize this.state or set it inside code
 // mention that EDIT is done on double click only
+// REMOVE SET TIMEOUT FOR LOGIN CALL, (used only to show loading icon)???
 // cannot save with BLANK DEVICENAME
 // CHANGE deviocename to deviceName
 // GET RID OF EXTRA devices

@@ -8,3 +8,18 @@
       max-width: 320px;
     }
   }
+
+  .login-wrapper{
+    background-image:url('../images/wireless.jpg');
+    height:900px;
+  }
+
+  .has-error .form-control {
+    border-color: #a94442;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  }
+
+  .help-block {
+    font-size:0.8em;
+    color: #a94442;
+  }

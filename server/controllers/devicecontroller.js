@@ -79,7 +79,6 @@ exports.device_update_on_put = function(req, res) {
               return;
           }
           console.log('hello here!');
-          //debugger
           for (prop in req.body) {
               if (prop !== '_id') {
                   console.log('her i am');

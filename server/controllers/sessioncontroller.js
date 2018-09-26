@@ -1,4 +1,4 @@
-
+const bcrypt = require('bcryptjs');
 var usersModel = require('../models/userModel.js');
 //var authToken = require('./authToken');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
@@ -32,7 +32,7 @@ exports.session_login_on_post = function(req, res) {
             return;
         }
         // check if password matches
-        if (user.password != postData.password) {
+        if (!bcrypt.compareSync(postData.password, user.password)) {
             console.log('Password not matching');
             res.status(401).json({ auth: false,
                        message: 'password not correct' });
@@ -41,7 +41,7 @@ exports.session_login_on_post = function(req, res) {
 
         console.log('login successful');
         var token = jwt.sign({ "id": user._id, "role": user.role }, config.salt, {
-                expiresIn: 120 // expires in 2 minutes 
+                expiresIn: 300 // expires in 2 minutes 
         });
         // if yes, send success and role from database 
         res.status(200).json({ auth: true, token: token,

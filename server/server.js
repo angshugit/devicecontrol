@@ -36,12 +36,12 @@ app.use(function(req, res, next) {
 });
 
 var deviceRouter = require('./routes/device');
-//var userRouter = require('./routes/user');
+var userRouter = require('./routes/user');
 var sessionRouter = require('./routes/session');
 
-app.use('/session', sessionRouter);
-//app.use('/users', userRouter);
-app.use('/devices', authToken, deviceRouter);
+app.use('/v1/session', sessionRouter);
+app.use('/v1/users', authToken, userRouter);
+app.use('/v1/devices', authToken, deviceRouter);
 
 app.get('/api/login', (req, res) => {
   res.send({ user: 'parent' });

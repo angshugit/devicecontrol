@@ -1,2 +1,3 @@
 {"username":"parent@home.com","password":"parent","role":"admin","_id":"45y0bGQ2hLfKWyUa"}
 {"username":"child@home.com","password":"child","role":"view","_id":"4Ao5PVWxcpXqDGoge"}
+{"username":"anika@home.com","password":"$2a$08$tuWl5afm7mqMLvjghXtZfOR8M57P3qIOi.bnhvTdWsU0qfBYiLypi","role":"view","_id":"XmNgX0SNHEQUoILG"}

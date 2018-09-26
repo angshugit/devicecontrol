@@ -32,12 +32,12 @@ exports.device_add_on_post = function(req, res) {
     }
     devicesModel.findOne({ devicename: postData.devicename }, function(err, device) {
         if (err) {
-            res.send(err);
+            res.status(500).send(err);
             console.log('Error finding device');
             return;
         }
         if (device) {
-            res.json({ type: 'error',
+            res.status(409).json({ type: 'error',
                        message: 'Device already exists with "devicename" of "'
                        + postData.devicename + '".' });
             return;
@@ -49,7 +49,7 @@ exports.device_add_on_post = function(req, res) {
                     return;
                 }
                 console.log(newDevice);
-                res.json(newDevice);
+                res.status(201).json(newDevice);
             });
         }
     });

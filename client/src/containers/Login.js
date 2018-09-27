@@ -1,13 +1,19 @@
 import React, { Component } from "react";
-import { Form, FormGroup, Col, ControlLabel, FormControl, Button } from "react-bootstrap";
-import axios from 'axios';
+import {
+  Form,
+  FormGroup,
+  Col,
+  ControlLabel,
+  FormControl,
+  Button
+} from "react-bootstrap";
+import axios from "axios";
 import LoaderButton from "../components/LoaderButton";
-import './Login.css';
+import "./Login.css";
 
 class Login extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       isLoading: false,
       email: "",
@@ -15,55 +21,53 @@ class Login extends Component {
       passwordError: ""
     };
   }
-
-  // validateForm() {
-  //   return this.state.email.length > 0 && this.state.password.length > 0
-  // }
-
   handleChange = e => {
     // this.setState({ [e.target.name]: e.target.value, [`${e.target.name}Error`]:  '' })
     this.setState({
       [e.target.id]: e.target.value
     });
   };
-  _validateForm(){
+  _validateForm() {
     const { passwordError } = this.state;
-
-        if (this.state.password.length < 5) {
-          this.setState({
-            passwordError: 'Please enter at least 5 characters.'
-          })
-          return false;
-
-
+    if (this.state.password.length < 5) {
+      this.setState({
+        passwordError: "Please enter at least 5 characters."
+      });
+      return false;
+    }
+    return true;
   }
-  return true;
-}
-
   handleSubmit = event => {
     event.preventDefault();
-    if (!this._validateForm()){
+    if (!this._validateForm()) {
       return;
     }
     this.setState({ isLoading: true });
     this.props.userHasAuthenticated(true);
-    sessionStorage.setItem('user', 'parent');
+    sessionStorage.setItem("user", "parent");
     this.props.history.push({
-            pathname: '/DeviceList',
-            state: { user: 'parent' }
+      pathname: "/DeviceList",
+      state: { user: "parent" }
+    });
+    let bodyFormData = new FormData();
+    bodyFormData.set("username", "parent@home.com");
+    bodyFormData.set("password", "parent");
+     //TODO: set timeout 1000 ms to show loading spinner
+    axios({
+      method: "post",
+      url: "/v1/session/",
+      data: bodyFormData,
+      config: { headers: { "Content-Type": "multipart/form-data" } }
     })
-    // setTimeout(
-    //   () => {axios.get('/api/login').then(response => {
-    //     this.props.userHasAuthenticated(true);
-    //     sessionStorage.setItem('user', 'parent');
-    //     this.props.history.push({
-    //       pathname: '/DeviceList',
-    //       state: { user: response.data.user }
-    //     })
-    //   }
-    //   );
-    // },0);
-  }
+      .then(function(response) {
+        //handle success
+        console.log(response);
+      })
+      .catch(function(response) {
+        //handle error
+        console.log(response);
+      });
+  };
 
   renderError() {
     const { passwordError } = this.state;
@@ -74,12 +78,13 @@ class Login extends Component {
 
     return null;
   }
-  errorClass(error){
-    return(error.length === 0 ? '' : 'has-error');
+  errorClass(error) {
+    return error.length === 0 ? "" : "has-error";
   }
 
   render() {
-    return <div className="container py-5 login-wrapper">
+    return (
+      <div className="container py-5 login-wrapper">
         <div className="row">
           <div className="col-md-6 mx-auto">
             <div className="card rounded">
@@ -87,48 +92,56 @@ class Login extends Component {
                 <h3 className="mb-0">Login</h3>
               </div>
               <div className="card-body">
-                <Form horizontal onSubmit={this.handleSubmit} >
-                  <FormGroup controlId="email"
->
+                <Form horizontal onSubmit={this.handleSubmit}>
+                  <FormGroup controlId="email">
                     <Col componentClass={ControlLabel} sm={5}>
                       Username
                     </Col>
                     <Col sm={10}>
-                      <FormControl autoFocus
-                          type="email"
-                          required
-                          autoComplete="email"
-                          value={this.state.email}
-                          onChange={this.handleChange}
-                          placeholder="username or email" />
+                      <FormControl
+                        autoFocus
+                        type="email"
+                        required
+                        autoComplete="email"
+                        value={this.state.email}
+                        onChange={this.handleChange}
+                        placeholder="username or email"
+                      />
                     </Col>
                   </FormGroup>
-                  <FormGroup controlId="password" className={`form-group ${this.errorClass(this.state.passwordError)}`}>
+                  <FormGroup
+                    controlId="password"
+                    className={`form-group ${this.errorClass(
+                      this.state.passwordError
+                    )}`}
+                  >
                     <Col componentClass={ControlLabel} sm={5}>
                       Password
                     </Col>
                     <Col sm={10}>
-                      <FormControl value={this.state.password}
-                          onChange={this.handleChange}
-                          type="password"
-                          required
-                          value={this.state.password}
-                          placeholder="password" />
-                          {this.renderError()}
+                      <FormControl
+                        value={this.state.password}
+                        onChange={this.handleChange}
+                        type="password"
+                        required
+                        value={this.state.password}
+                        placeholder="password"
+                      />
+                      {this.renderError()}
                     </Col>
                   </FormGroup>
 
                   <FormGroup>
                     <Col smOffset={2} sm={10}>
                       <LoaderButton
-                      block
-                      bsSize="large"
-                      className="btn-dark signIn-btn"
-                      type="submit"
-                      isLoading={this.state.isLoading}
-                      text="Sign In"
-                      loadingText="Logging in…"
-                    />
+                        block
+                        bsSize="large"
+                        className="btn-dark signIn-btn"
+                        type="submit"
+                        isLoading={this.state.isLoading}
+                        text="Sign In"
+                        loadingText="Logging in…"
+                      />
                     </Col>
                   </FormGroup>
                 </Form>
@@ -136,7 +149,8 @@ class Login extends Component {
             </div>
           </div>
         </div>
-      </div>;
+      </div>
+    );
   }
 }
 

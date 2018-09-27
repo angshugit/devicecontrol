@@ -9,9 +9,8 @@
 //  show spinner toggling status
 // how to get authenticated role
 
-
 import React, { Component } from "react";
-import { Button, Modal, ControlLabel, FormControl  } from "react-bootstrap";
+import { Button, Modal, ControlLabel, FormControl } from "react-bootstrap";
 import axios from "axios";
 import FontAwesome from "react-fontawesome";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
@@ -21,12 +20,13 @@ class DeviceList extends Component {
   constructor(props) {
     super(props);
   }
-  state = { authenticatedUser: null,
-            devices: null,
-            showAddDeviceModal: false,
-            newDeviceName: '',
-            newDeviceStatus: 'Paused'
-    };
+  state = {
+    authenticatedUser: null,
+    devices: null,
+    showAddDeviceModal: false,
+    newDeviceName: "",
+    newDeviceStatus: "Paused"
+  };
   componentDidMount() {
     if (this.props.history.location.state.user === "parent") {
       this.setState({
@@ -49,8 +49,8 @@ class DeviceList extends Component {
   /**
    * adds new device
    */
-  addNewDevice(){
-    this.setState({showAddDeviceModal: true});
+  addNewDevice() {
+    this.setState({ showAddDeviceModal: true });
   }
   /**
    * toggle device status on click of button
@@ -142,51 +142,59 @@ class DeviceList extends Component {
    * @param {*} cellName
    */
   onAfterSaveCell(row, cellName, cellValue) {
-    axios.put(`/devices/${row._id}`, {
-      devicename: cellValue
-    }).then(response => {
-      console.log(response);
-    }).catch(error => {
-      console.log(error);
-    });
+    axios
+      .put(`/devices/${row._id}`, {
+        devicename: cellValue
+      })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
   /**
    * handling devicename edit and save
    * @param {*} event
    */
-  handleDeviceNameChange(event){
-      this.setState({ newDeviceName: event.target.value });
+  handleDeviceNameChange(event) {
+    this.setState({ newDeviceName: event.target.value });
   }
   /**
    * handling device status edit and save
    * @param {*} event
    */
-  handleDeviceStatusChange(event){
+  handleDeviceStatusChange(event) {
     this.setState({ newDeviceStatus: event.target.value });
   }
   /**
    * save new device
    * @param {*} event
    */
-  saveNewDevice(event){
-    axios.post("/devices/", {
+  saveNewDevice(event) {
+    axios
+      .post("/devices/", {
         devicename: this.state.newDeviceName,
         status: this.state.newDeviceStatus
-    })
-    .then(response => {
-      if (response.data.devicename) {
-        const data = response.data;
-        const newdevice = {devicename: data.devicename, status: data.status, _id: data._id};
-        this.setState(previousState => ({
-          devices: [...this.state.devices, newdevice]
-      }));
+      })
+      .then(response => {
+        if (response.data.devicename) {
+          const data = response.data;
+          const newdevice = {
+            devicename: data.devicename,
+            status: data.status,
+            _id: data._id
+          };
+          this.setState(previousState => ({
+            devices: [...this.state.devices, newdevice]
+          }));
+          this.setState({ showAddDeviceModal: false });
+        }
+      })
+      .catch(error => {
+        console.log(error);
         this.setState({ showAddDeviceModal: false });
-      }
-    })
-    .catch(error => {
-      console.log(error);
-      this.setState({ showAddDeviceModal: false });
-    });
+      });
   }
 
   render() {
@@ -257,45 +265,48 @@ class DeviceList extends Component {
                   Delete
                 </TableHeaderColumn>
               </BootstrapTable>
-              <Modal
-          show={this.state.showAddDeviceModal}
-          container={this}
-        >
-          <Modal.Header>
-            <Modal.Title id="add-new-device-modal">
-             Add New Device
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-          <div className="modal-body">
-              <div className="form-group">
-              <ControlLabel>Device Name</ControlLabel>
-          <FormControl
-            type="text"
-            value={this.state.newDeviceName}
-            placeholder="Device Name"
-            onChange={this.handleDeviceNameChange.bind(this)}
-          />
-                </div>
-                <div className="form-group">
-                    <ControlLabel>Device Status</ControlLabel>
-                    <FormControl
-                        componentClass="select" placeholder="Select Status"
+              <Modal show={this.state.showAddDeviceModal} container={this}>
+                <Modal.Header>
+                  <Modal.Title id="add-new-device-modal">
+                    Add New Device
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="modal-body">
+                    <div className="form-group">
+                      <ControlLabel>Device Name</ControlLabel>
+                      <FormControl
+                        type="text"
+                        value={this.state.newDeviceName}
+                        placeholder="Device Name"
+                        onChange={this.handleDeviceNameChange.bind(this)}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <ControlLabel>Device Status</ControlLabel>
+                      <FormControl
+                        componentClass="select"
+                        placeholder="Select Status"
                         value={this.state.newDeviceStatus}
                         onChange={this.handleDeviceStatusChange.bind(this)}
-                        >
-                      <option value="Paused">Paused</option>
-                      <option value="Unpaused">Unpaused</option>
-                    </FormControl>
+                      >
+                        <option value="Paused">Paused</option>
+                        <option value="Unpaused">Unpaused</option>
+                      </FormControl>
+                    </div>
+                  </div>
+                </Modal.Body>
+                <div className="modal-footer react-bs-table-inser-modal-footer">
+                  <span>
+                    <Button
+                      className="btn btn-primary btn-large centerButton"
+                      onClick={this.saveNewDevice.bind(this)}
+                    >
+                      Save
+                    </Button>
+                  </span>
                 </div>
-            </div>
-          </Modal.Body>
-            <div className="modal-footer react-bs-table-inser-modal-footer">
-                <span>
-                <Button className="btn btn-primary btn-large centerButton" onClick={this.saveNewDevice.bind(this)}>Save</Button>
-                </span>
-            </div>
-        </Modal>
+              </Modal>
             </div>
           )}
       </div>

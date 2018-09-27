@@ -43,9 +43,9 @@ app.use('/v1/session', sessionRouter);
 app.use('/v1/users', authToken, userRouter);
 app.use('/v1/devices', authToken, deviceRouter);
 
-app.get('/api/login', (req, res) => {
-  res.send({ user: 'parent' });
-});
+// app.get('/api/login', (req, res) => {
+//   res.send({ user: 'parent' });
+// });
 
 if (process.env.NODE_ENV === 'production') {
     // Serve any static files

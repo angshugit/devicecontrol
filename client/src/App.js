@@ -19,7 +19,6 @@ class App extends Component {
   };
   componentDidMount() {
     // check if user is in session
-    debugger;
     if (sessionStorage.getItem("user") === "parent") {
       this.userHasAuthenticated(true);
       this.setState({ isAuthenticating: false });
@@ -52,8 +51,8 @@ class App extends Component {
           {this.state.isAuthenticated && (
             <NavItem>
               <div>
-              <span class="list-group-item person-icon" href="#">
-                <i class="fa fa-user fa-lg" aria-hidden="true"></i>
+              <span className="list-group-item person-icon" href="#">
+                <i className="fa fa-user fa-lg" aria-hidden="true"></i>
                 </span>
                          <label className="mr-2 text-white">uju</label>
                 <button

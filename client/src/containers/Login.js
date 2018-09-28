@@ -43,27 +43,26 @@ class Login extends Component {
       return;
     }
     this.setState({ isLoading: true });
-    this.props.userHasAuthenticated(true);
-    sessionStorage.setItem("user", "parent");
-    this.props.history.push({
-      pathname: "/DeviceList",
-      state: { user: "parent" }
-    });
-    let bodyFormData = new FormData();
-    bodyFormData.set("username", "parent@home.com");
-    bodyFormData.set("password", "parent");
-     //TODO: set timeout 1000 ms to show loading spinner
-    axios.post("/v1/session/", {
-      username: this.state.email,
-      password: this.state.password
-    })
-      .then(function(response) {
-        //handle success
-        console.log(response);
+    //TODO: set timeout 1000 ms to show loading spinner
+    axios
+      .post("/v1/session/", {
+        username: this.state.email,
+        password: this.state.password
       })
-      .catch(function(response) {
-        //handle error
-        console.log(response);
+      .then(response => {
+        this.props.userHasAuthenticated(true);
+        localStorage.setItem("authToken", response.data.token);
+        this.props.history.push({
+          pathname: "/DeviceList",
+          state: { role: "admin" }
+        });
+      })
+      .catch(response => {
+        console.log(response.response.data.message);
+        // set username errors
+        // this.setState({
+        //   passwordError: "There is no account for the username or email you entered.."
+        // });
       });
   };
 
@@ -138,7 +137,6 @@ class Login extends Component {
                         type="submit"
                         isLoading={this.state.isLoading}
                         text="Sign In"
-                        loadingText="Logging in…"
                       />
                     </Col>
                   </FormGroup>

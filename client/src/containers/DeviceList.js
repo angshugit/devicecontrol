@@ -33,6 +33,7 @@ class DeviceList extends Component {
         authenticatedUser: this.props.history.location.state.user
       });
     }
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('authToken');
     axios
       .get("/v1/devices/")
       .then(response => {

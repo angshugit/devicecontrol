@@ -4,11 +4,20 @@ const  bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const webpush = require('web-push');
 //const cookieParser = require('cookie-parser');
 //const session = require('express-session');
+//
+var config = require('./config');
 var authToken = require('./controllers/authToken');
 
 const port = process.env.PORT || 5000;
+
+const publicVapidKey = config.wp_public_vapid_key;//process.env.PUBLIC_VAPID_KEY;
+const privateVapidKey = config.wp_private_vapid_key; //process.env.PRIVATE_VAPID_KEY;
+
+// Replace with your email
+webpush.setVapidDetails('mailto:am.mukherjee@gmail.com', publicVapidKey, privateVapidKey);
 
 const app = express();
 
@@ -46,6 +55,18 @@ app.use('/v1/devices', authToken, deviceRouter);
 // app.get('/api/login', (req, res) => {
 //   res.send({ user: 'parent' });
 // });
+
+app.post('/v1/listeners', (req, res) => {
+    const subscription = req.body;
+    res.status(201).json({});
+    const payload = JSON.stringify({ title: 'test' });
+
+    console.log(subscription);
+
+    webpush.sendNotification( subscription, payload).catch(error => {
+        console.error(error.stack);
+    });
+});
 
 if (process.env.NODE_ENV === 'production') {
     // Serve any static files

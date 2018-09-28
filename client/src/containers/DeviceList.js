@@ -34,7 +34,7 @@ class DeviceList extends Component {
       });
     }
     axios
-      .get("/devices/")
+      .get("/v1/devices/")
       .then(response => {
         if (response.data.devices) {
           this.setState({
@@ -69,7 +69,7 @@ class DeviceList extends Component {
     newStatus[rowIndex].status = toggleValue; //execute the manipulations
     this.setState({ devices: newStatus });
     axios
-      .put(`/devices/${row._id}`, {
+      .put(`/v1/devices/${row._id}`, {
         status: toggleValue
       })
       .then(response => {
@@ -128,7 +128,7 @@ class DeviceList extends Component {
     );
     this.setState({ devices: removedList });
     axios
-      .delete(`/devices/${row._id}`)
+      .delete(`/v1/devices/${row._id}`)
       .then(response => {
         console.log(response);
       })
@@ -143,7 +143,7 @@ class DeviceList extends Component {
    */
   onAfterSaveCell(row, cellName, cellValue) {
     axios
-      .put(`/devices/${row._id}`, {
+      .put(`/v1/devices/${row._id}`, {
         devicename: cellValue
       })
       .then(response => {
@@ -173,7 +173,7 @@ class DeviceList extends Component {
    */
   saveNewDevice(event) {
     axios
-      .post("/devices/", {
+      .post("/v1/devices/", {
         devicename: this.state.newDeviceName,
         status: this.state.newDeviceStatus
       })

@@ -53,11 +53,9 @@ class Login extends Component {
     bodyFormData.set("username", "parent@home.com");
     bodyFormData.set("password", "parent");
      //TODO: set timeout 1000 ms to show loading spinner
-    axios({
-      method: "post",
-      url: "/v1/session/",
-      data: bodyFormData,
-      config: { headers: { "Content-Type": "multipart/form-data" } }
+    axios.post("/v1/session/", {
+      username: this.state.email,
+      password: this.state.password
     })
       .then(function(response) {
         //handle success

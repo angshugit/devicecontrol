@@ -3,6 +3,7 @@ import { Link, withRouter } from "react-router-dom";
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import Routes from "./Routes";
+import axios from "axios";
 import './App.css';
 
 class App extends Component {
@@ -25,10 +26,25 @@ class App extends Component {
     }
   }
   handleLogout() {
-    this.userHasAuthenticated(false);
-    sessionStorage.removeItem("user");
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('authToken');
+    axios
+    .delete("/v1/session/")
+    .then(response => {
+      this.userHasAuthenticated(false);
+    localStorage.removeItem('authToken');
     this.props.history.push("/login");
+
+    })
+    .catch(response => {
+      console.log(response.response.data.message);
+      // set username errors
+      // this.setState({
+      //   passwordError: "There is no account for the username or email you entered.."
+      // });
+    })
+
   }
+
   render() {
     const childProps = {
       isAuthenticated: this.state.isAuthenticated,

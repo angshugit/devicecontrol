@@ -68,17 +68,14 @@ class Login extends Component {
 
   renderError() {
     const { passwordError } = this.state;
-
     if (passwordError) {
       return <div className="help-block">{passwordError}</div>;
     }
-
     return null;
   }
   errorClass(error) {
     return error.length === 0 ? "" : "has-error";
   }
-
   render() {
     return (
       <div className="container py-5 login-wrapper">

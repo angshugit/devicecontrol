@@ -1,7 +1,10 @@
-.col-hidden{
-    display:none;
+.deviceListWrapper{
+    padding-top:150px;
 }
 
+.colHidden{
+    display:none;
+}
 .delbutton {
     display: block;
     width: 50%;

@@ -1,3 +1,7 @@
+// TODO: see if u can remnove isLoading
+// and check loaderbutton
+    //TODO: set timeout 1000 ms to show loading spinner
+
 import React, { Component } from "react";
 import {
   Form,
@@ -8,7 +12,7 @@ import {
   Button
 } from "react-bootstrap";
 import axios from "axios";
-import LoaderButton from "../components/LoaderButton";
+// import LoaderButton from "../components/LoaderButton";
 import "./Login.css";
 
 class Login extends Component {
@@ -18,11 +22,12 @@ class Login extends Component {
       isLoading: false,
       email: "",
       password: "",
-      passwordError: ""
+      passwordError: null,
+      userNameError: null,
+      usernamePwdError: null
     };
   }
   handleChange = e => {
-    // this.setState({ [e.target.name]: e.target.value, [`${e.target.name}Error`]:  '' })
     this.setState({
       [e.target.id]: e.target.value
     });
@@ -43,42 +48,55 @@ class Login extends Component {
       return;
     }
     this.setState({ isLoading: true });
-    //TODO: set timeout 1000 ms to show loading spinner
     axios
       .post("/v1/session/", {
         username: this.state.email,
         password: this.state.password
       })
       .then(response => {
-        this.props.userHasAuthenticated(true);
-        localStorage.setItem("authToken", response.data.token);
+        const data = response.data;
+        this.props.userHasAuthenticated(data.auth);
+        localStorage.setItem("authToken", data.token);
         this.props.history.push({
           pathname: "/DeviceList",
-          state: { role: "admin" }
+          state: { role: data.role }
         });
       })
       .catch(response => {
-        console.log(response.response.data.message);
-        // set username errors
-        // this.setState({
-        //   passwordError: "There is no account for the username or email you entered.."
-        // });
+        const res = response.response;
+        if (res.status === 404 && res.statusText === "Not Found"){
+          this.setState({
+            userNameError: "There is no account for the username or email you entered"
+          });
+        }
+        if (res.status === 401 && res.statusText === "Unauthorized"){
+          this.setState({
+            usernamePwdError: "The username and/or password you provided are incorrect"
+          });
+        }
+        if (!res.data.auth){
+          this.props.userHasAuthenticated(false);
+        }
       });
   };
 
-  renderError() {
-    const { passwordError } = this.state;
-    if (passwordError) {
+  renderError(elm) {
+    const { userNameError, passwordError } = this.state;
+    if (passwordError && elm === 'password') {
       return <div className="help-block">{passwordError}</div>;
+    }
+    if (userNameError && elm === 'username') {
+      return <div className="help-block">{userNameError}</div>;
     }
     return null;
   }
   errorClass(error) {
-    return error.length === 0 ? "" : "has-error";
+    let elm = error ? "has-error" : "";
+    return elm;
   }
   render() {
-    return (
-      <div className="container py-5 login-wrapper">
+    const { passwordError, userNameError, usernamePwdError } = this.state;
+    return <div className="container loginWrapper">
         <div className="row">
           <div className="col-md-6 mx-auto">
             <div className="card rounded">
@@ -92,49 +110,28 @@ class Login extends Component {
                       Username
                     </Col>
                     <Col sm={10}>
-                      <FormControl
-                        autoFocus
-                        type="email"
-                        required
-                        autoComplete="email"
-                        value={this.state.email}
-                        onChange={this.handleChange}
-                        placeholder="username or email"
-                      />
+                      <FormControl className={`form-group ${this.errorClass(userNameError)}`} autoFocus type="email" required autoComplete="email" value={this.state.email} onChange={this.handleChange} placeholder="username or email" />
+                      {this.renderError("username")}
                     </Col>
                   </FormGroup>
-                  <FormGroup
-                    controlId="password"
-                    className={`form-group ${this.errorClass(
-                      this.state.passwordError
-                    )}`}
-                  >
+                  <FormGroup controlId="password" className={`form-group ${this.errorClass(passwordError)}`}>
                     <Col componentClass={ControlLabel} sm={5}>
                       Password
                     </Col>
                     <Col sm={10}>
-                      <FormControl
-                        value={this.state.password}
-                        onChange={this.handleChange}
-                        type="password"
-                        required
-                        value={this.state.password}
-                        placeholder="password"
-                      />
-                      {this.renderError()}
+                      <FormControl value={this.state.password} onChange={this.handleChange} type="password" required value={this.state.password} placeholder="password" />
+                      {this.renderError("password")}
                     </Col>
                   </FormGroup>
-
+                  {usernamePwdError &&
+                  <div class="alert alert-danger" role="alert">
+                    {usernamePwdError}
+                  </div>}
                   <FormGroup>
                     <Col smOffset={2} sm={10}>
-                      <LoaderButton
-                        block
-                        bsSize="large"
-                        className="btn-dark signIn-btn"
-                        type="submit"
-                        isLoading={this.state.isLoading}
-                        text="Sign In"
-                      />
+                      <Button block bsSize="large" className="btn-dark signIn-btn" type="submit" text="Sign In">
+                        Sign In
+                      </Button>
                     </Col>
                   </FormGroup>
                 </Form>
@@ -142,8 +139,7 @@ class Login extends Component {
             </div>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
 }
 

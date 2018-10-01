@@ -14,6 +14,7 @@ import { Button, Modal, ControlLabel, FormControl } from "react-bootstrap";
 import axios from "axios";
 import FontAwesome from "react-fontawesome";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
+import "./Login.css";
 import "./DeviceList.css";
 
 class DeviceList extends Component {
@@ -21,16 +22,16 @@ class DeviceList extends Component {
     super(props);
   }
   state = {
-    authenticatedUser: null,
+    userRole: null,
     devices: null,
     showAddDeviceModal: false,
     newDeviceName: "",
     newDeviceStatus: "Paused"
   };
   componentDidMount() {
-    if (this.props.history.location.state.user === "parent") {
+    if (this.props.history.location && this.props.history.location.state.role) {
       this.setState({
-        authenticatedUser: this.props.history.location.state.user
+        userRole: this.props.history.location.state.role
       });
     }
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('authToken');
@@ -199,6 +200,7 @@ class DeviceList extends Component {
   }
 
   render() {
+    const role = this.state.userRole;
     const devices = this.state.devices ? this.state.devices : null;
     const columns = [
       {
@@ -221,9 +223,9 @@ class DeviceList extends Component {
     };
     return (
       <div>
-        {this.state &&
+        {role === "admin" && this.state &&
           this.state.devices && (
-            <div>
+            <div className="deviceListWrapper">
               <div className="row form-group">
                 <div className="col-xs-6 col-sm-6 col-md-6 col-lg-8">
                   <div className="btn-group btn-group-sm" role="group">
@@ -242,7 +244,7 @@ class DeviceList extends Component {
               <BootstrapTable
                 cellEdit={cellEditProp}
                 data={devices}
-                tableHeaderClass={"col-hidden"}
+                tableHeaderClass={"colHidden"}
               >
                 <TableHeaderColumn dataField="_id" hidden isKey hiddenOnInsert>
                   Device ID

@@ -57,7 +57,7 @@ class App extends Component {
           className="navbar navbar-dark device-nav-bar fixed-top"
         >
           <Link className="navbar-brand" to="/">
-            Manage Wireless Devices
+            My Home Devices
           </Link>
           {!this.state.isAuthenticated && (
               <NavItem>

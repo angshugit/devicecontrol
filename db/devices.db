@@ -1,9 +1,3 @@
-{"devicename":"arka","status":"Paused","_id":"0s5CTwOss7IEjN8T"}
-{"devicename":"Amazon Echo","status":"unpaused","_id":"45y0aGQ2hLfKWyUa"}
-{"devicename":"alexa2","status":"PAUSED","_id":"Ao3PVWxcpXqDGoge"}
-{"devicename":"roku","status":"PAUSED","_id":"ZHUAIYowfxkwUdJP"}
-{"devicename":"chromecast","status":"UNPAUSED","_id":"bO882geDwksyVLwj"}
-{"devicename":"arka","status":"UNPAUSED","_id":"0s5CTwOss7IEjN8T"}
 {"devicename":"Amazon Echo","status":"PAUSED","_id":"45y0aGQ2hLfKWyUa"}
-{"$$deleted":true,"_id":"0s5CTwOss7IEjN8T"}
-{"$$deleted":true,"_id":"ZHUAIYowfxkwUdJP"}
+{"devicename":"alexa2","status":"PAUSED","_id":"Ao3PVWxcpXqDGoge"}
+{"devicename":"chromecast","status":"UNPAUSED","_id":"bO882geDwksyVLwj"}

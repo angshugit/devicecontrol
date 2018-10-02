@@ -8,6 +8,7 @@
 // CHANGE 'Paused' to 'paused' and same for 'unpaused'
 //  show spinner toggling status
 // how to get authenticated role
+// buttons paused/unpasuded curosor pointer
 
 import React, { Component } from "react";
 import { Button, Modal, ControlLabel, FormControl } from "react-bootstrap";

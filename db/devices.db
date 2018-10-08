@@ -1,3 +1,7 @@
 {"devicename":"Amazon Echo","status":"PAUSED","_id":"45y0aGQ2hLfKWyUa"}
 {"devicename":"alexa2","status":"PAUSED","_id":"Ao3PVWxcpXqDGoge"}
 {"devicename":"chromecast","status":"UNPAUSED","_id":"bO882geDwksyVLwj"}
+{"devicename":"Amazon Echo","status":"UNPAUSED","_id":"45y0aGQ2hLfKWyUa"}
+{"devicename":"alexa2","status":"UNPAUSED","_id":"Ao3PVWxcpXqDGoge"}
+{"devicename":"chromecast","status":"PAUSED","_id":"bO882geDwksyVLwj"}
+{"$$deleted":true,"_id":"45y0aGQ2hLfKWyUa"}

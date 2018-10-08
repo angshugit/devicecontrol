@@ -23,19 +23,13 @@ class DeviceList extends Component {
     super(props);
   }
   state = {
-    userRole: null,
     devices: null,
     showAddDeviceModal: false,
     newDeviceName: "",
     newDeviceStatus: "Paused"
   };
   componentDidMount() {
-    if (this.props.history.location && this.props.history.location.state.role) {
-      this.setState({
-        userRole: this.props.history.location.state.role
-      });
-    }
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('authToken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem("authToken")}`;
     axios
       .get("/v1/devices/")
       .then(response => {
@@ -46,6 +40,8 @@ class DeviceList extends Component {
         }
       })
       .catch(error => {
+        // status code 500
+        // {"auth":false,"message":"Failed to authenticate token: TokenExpiredError: jwt expired"}
         console.log(error);
       });
   }
@@ -53,6 +49,7 @@ class DeviceList extends Component {
    * adds new device
    */
   addNewDevice() {
+
     this.setState({ showAddDeviceModal: true });
   }
   /**
@@ -201,7 +198,7 @@ class DeviceList extends Component {
   }
 
   render() {
-    const role = this.state.userRole;
+    let role = localStorage.getItem("userRole");
     const devices = this.state.devices ? this.state.devices : null;
     const columns = [
       {
@@ -222,99 +219,98 @@ class DeviceList extends Component {
       blxurToSave: true,
       afterSaveCell: this.onAfterSaveCell
     };
-    return (
-      <div>
-        {role === "admin" && this.state &&
-          this.state.devices && (
-            <div className="deviceListWrapper">
-              <div className="row form-group">
-                <div className="col-xs-6 col-sm-6 col-md-6 col-lg-8">
-                  <div className="btn-group btn-group-sm" role="group">
-                    <button
-                      type="button"
-                      onClick={this.addNewDevice.bind(this)}
-                      className="btn btn-info react-bs-table-add-btn "
-                    >
-                      <span>
-                        <i className="glyphicon glyphicon-plus" />New
-                      </span>
-                    </button>
-                  </div>
+    return ( <div>
+      {this.state &&
+        this.state.devices && (
+          <div className="device-list-wrapper">
+            <div className="row form-group">
+              <div className="col-xs-6 col-sm-6 col-md-6 col-lg-8">
+                <div className="btn-group btn-group-sm" role="group">
+                  <button
+                    type="button"
+                    onClick={this.addNewDevice.bind(this)}
+                    className="btn btn-info react-bs-table-add-btn "
+                  >
+                    <span>
+                      <i className="glyphicon glyphicon-plus" />New
+                    </span>
+                  </button>
                 </div>
               </div>
-              <BootstrapTable
-                cellEdit={cellEditProp}
-                data={devices}
-                tableHeaderClass={"colHidden"}
-              >
-                <TableHeaderColumn dataField="_id" hidden isKey hiddenOnInsert>
-                  Device ID
-                </TableHeaderColumn>
-                <TableHeaderColumn dataField="devicename">
-                  Device Name
-                </TableHeaderColumn>
-                <TableHeaderColumn
-                  dataField="status"
-                  editable={false}
-                  dataFormat={this.statusCellButton.bind(this)}
-                >
-                  Device Status
-                </TableHeaderColumn>
-                <TableHeaderColumn
-                  dataField="button"
-                  editable={false}
-                  dataFormat={this.deleteButton.bind(this)}
-                  hiddenOnInsert
-                >
-                  Delete
-                </TableHeaderColumn>
-              </BootstrapTable>
-              <Modal show={this.state.showAddDeviceModal} container={this}>
-                <Modal.Header>
-                  <Modal.Title id="add-new-device-modal">
-                    Add New Device
-                  </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <div className="modal-body">
-                    <div className="form-group">
-                      <ControlLabel>Device Name</ControlLabel>
-                      <FormControl
-                        type="text"
-                        value={this.state.newDeviceName}
-                        placeholder="Device Name"
-                        onChange={this.handleDeviceNameChange.bind(this)}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <ControlLabel>Device Status</ControlLabel>
-                      <FormControl
-                        componentClass="select"
-                        placeholder="Select Status"
-                        value={this.state.newDeviceStatus}
-                        onChange={this.handleDeviceStatusChange.bind(this)}
-                      >
-                        <option value="Paused">Paused</option>
-                        <option value="Unpaused">Unpaused</option>
-                      </FormControl>
-                    </div>
-                  </div>
-                </Modal.Body>
-                <div className="modal-footer react-bs-table-inser-modal-footer">
-                  <span>
-                    <Button
-                      className="btn btn-primary btn-large centerButton"
-                      onClick={this.saveNewDevice.bind(this)}
-                    >
-                      Save
-                    </Button>
-                  </span>
-                </div>
-              </Modal>
             </div>
-          )}
-      </div>
-    );
+            <BootstrapTable
+              cellEdit={cellEditProp}
+              data={devices}
+              tableHeaderClass="col-hidden"
+            >
+              <TableHeaderColumn dataField="_id" hidden isKey hiddenOnInsert>
+                Device ID
+              </TableHeaderColumn>
+              <TableHeaderColumn  dataField="devicename">
+                Device Name
+              </TableHeaderColumn>
+              <TableHeaderColumn
+                dataField="status"
+                editable={false}
+                dataFormat={this.statusCellButton.bind(this)}
+              >
+                Device Status
+              </TableHeaderColumn>
+              <TableHeaderColumn
+                dataField="button"
+                editable={false}
+                dataFormat={this.deleteButton.bind(this)}
+                hiddenOnInsert
+              >
+                Delete
+              </TableHeaderColumn>
+            </BootstrapTable>
+            <Modal
+        show={this.state.showAddDeviceModal}
+        container={this}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="add-new-device-modal">
+           Add New Device
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <div className="modal-body">
+            <div className="form-group">
+            <ControlLabel>Device Name</ControlLabel>
+        <FormControl
+          type="text"
+          value={this.state.newDeviceName}
+          placeholder="Device Name"
+          onChange={this.handleDeviceNameChange.bind(this)}
+
+        />
+              </div>
+              <div className="form-group">
+                  {/* <label>Device Status</label> */}
+                  <ControlLabel>Device Status</ControlLabel>
+                  <FormControl
+                      componentClass="select" placeholder="Select Status"
+                      value={this.state.newDeviceStatus}
+                      onChange={this.handleDeviceStatusChange.bind(this)}
+                      >
+                    <option value="Paused">Paused</option>
+                    <option value="Unpaused">Unpaused</option>
+                  </FormControl>
+              </div>
+          </div>
+        </Modal.Body>
+          <div className="modal-footer react-bs-table-inser-modal-footer">
+              <span>
+              <Button className="btn btn-primary btn-large centerButton" onClick={this.saveNewDevice.bind(this)}>Save</Button>
+              </span>
+          </div>
+      </Modal>
+          </div>
+        )}
+    </div>
+  );
+
   }
 }
 export default DeviceList;

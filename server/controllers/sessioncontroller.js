@@ -3,7 +3,7 @@ var usersModel = require('../models/userModel.js');
 //var authToken = require('./authToken');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 //var bcrypt = require('bcryptjs');
-var config = require('../config'); // 
+var config = require('../config'); //
 
 exports.session_login_on_post = function(req, res) {
     var postData = req.body,
@@ -41,9 +41,9 @@ exports.session_login_on_post = function(req, res) {
 
         console.log('login successful');
         var token = jwt.sign({ "id": user._id, "role": user.role }, config.salt, {
-                expiresIn: 300 // expires in 2 minutes 
+                expiresIn: 3000 // expires in 2 minutes
         });
-        // if yes, send success and role from database 
+        // if yes, send success and role from database
         res.status(200).json({ auth: true, token: token,
                    role: user.role });
     });

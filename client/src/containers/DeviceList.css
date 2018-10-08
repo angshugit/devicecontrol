@@ -1,8 +1,7 @@
-.deviceListWrapper{
+.device-list-wrapper{
     padding-top:150px;
 }
-
-.colHidden{
+.col-hidden{
     display:none;
 }
 .delbutton {
@@ -14,4 +13,16 @@
     font-size: 16px;
     cursor: pointer;
     text-align: center;
+}
+.fade:not(.show) {
+    opacity: 1.0;
+}
+.modal-backdrop {
+    opacity: 0.25 !important;
+}
+.modal-header{
+    display:block;
+}
+.modal-content{
+    margin-top:150px;
 }

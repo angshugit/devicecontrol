@@ -18,6 +18,12 @@ import "./Login.css";
 class Login extends Component {
   constructor(props) {
     super(props);
+    // TODO:
+    // if (localStorage.authToken){
+    //   // send to previous page is history
+    //   // ReactRouter.browserHistory.goBack();
+    //   this.props.history.goBack(1);
+    // }
     this.state = {
       isLoading: false,
       email: "",
@@ -42,6 +48,12 @@ class Login extends Component {
     }
     return true;
   }
+  resetErrors(){
+    this.setState({
+      userNameError: null,
+      usernamePwdError: null,
+    });
+  }
   handleSubmit = event => {
     event.preventDefault();
     if (!this._validateForm()) {
@@ -57,13 +69,14 @@ class Login extends Component {
         const data = response.data;
         this.props.userHasAuthenticated(data.auth);
         localStorage.setItem("authToken", data.token);
+        localStorage.setItem("userRole", data.role);
         this.props.history.push({
-          pathname: "/DeviceList",
-          state: { role: data.role }
+          pathname: "/DeviceList"
         });
       })
       .catch(response => {
         const res = response.response;
+        this.resetErrors();
         if (res.status === 404 && res.statusText === "Not Found"){
           this.setState({
             userNameError: "There is no account for the username or email you entered"
@@ -79,7 +92,6 @@ class Login extends Component {
         }
       });
   };
-
   renderError(elm) {
     const { userNameError, passwordError } = this.state;
     if (passwordError && elm === 'password') {
@@ -124,7 +136,7 @@ class Login extends Component {
                     </Col>
                   </FormGroup>
                   {usernamePwdError &&
-                  <div class="alert alert-danger" role="alert">
+                  <div className="alert alert-danger" role="alert">
                     {usernamePwdError}
                   </div>}
                   <FormGroup>

@@ -27,16 +27,18 @@ class App extends Component {
   }
   handleLogout() {
     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('authToken')}`;
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole');
     axios
       .delete('/v1/session/')
       .then(response => {
         this.userHasAuthenticated(false);
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userRole');
         this.props.history.push('/login');
     })
     .catch(response => {
-      console.log(response.response.data.message);
+      if (response.response.data.status === 500){
+        this.props.history.push('/login');
+      }
     })
   }
   render() {
@@ -46,19 +48,18 @@ class App extends Component {
     };
     const role = localStorage.userRole === 'view' ? 'viewer' : 'admin';
     return (
-      // !this.state.isAuthenticating &&
       <div className='App container'>
-        <Navbar fluid collapseOnSelect className='navbar navbar-dark device-nav-bar fixed-top'>
+          {this.state.isAuthenticated && (
+            <Navbar fluid collapseOnSelect className='navbar navbar-dark device-nav-bar fixed-top'>
           <Link className='navbar-brand' to='/'>
             My Home Devices
           </Link>
-          {this.state.isAuthenticated && (
             <NavItem>
               <div>
               <span className='list-group-item person-icon' href='#'>
                 <i className='fa fa-user fa-lg' aria-hidden='true'></i>
                 </span>
-                <label className='mr-2 text-white'>{role}</label>
+                <label className='text-white role'>{role}</label>
                 <button
                   className='btn btn-dark signIn-btn'
                   onClick={this.handleLogout}
@@ -67,8 +68,8 @@ class App extends Component {
                 </button>
               </div>
             </NavItem>
-          )}
         </Navbar>
+          )}
         <Routes childProps={childProps} />
       </div>
     );

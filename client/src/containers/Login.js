@@ -18,19 +18,19 @@ import "./Login.css";
 class Login extends Component {
   constructor(props) {
     super(props);
-    // TODO:
-    // if (localStorage.authToken){
-    //   // send to previous page is history
-    //   // ReactRouter.browserHistory.goBack();
-    //   this.props.history.goBack(1);
-    // }
+    if (localStorage.authToken){
+     localStorage.removeItem('authToken');
+     localStorage.removeItem('userRole');
+    }
     this.state = {
       isLoading: false,
       email: "",
       password: "",
       passwordError: null,
       userNameError: null,
-      usernamePwdError: null
+      usernamePwdError: null,
+      requiredUserName: false,
+      requiredPassword: false
     };
   }
   handleChange = e => {
@@ -38,25 +38,37 @@ class Login extends Component {
       [e.target.id]: e.target.value
     });
   };
-  _validateForm() {
-    const { passwordError } = this.state;
-    if (this.state.password.length < 5) {
+  validateForm() {
+    this.resetErrors();
+    const { email, password, passwordError, requiredUserName, requiredPassword } = this.state;
+    if (email === "" && password === ""){
+      this.setState({
+        requiredUserName: true,
+        requiredPassword: true
+      });
+      return false;
+    }
+    if (password.length < 5) {
       this.setState({
         passwordError: "Please enter at least 5 characters."
       });
       return false;
+    }else{
+      this.setState({passwordError: null });
+      return true;
     }
-    return true;
   }
   resetErrors(){
     this.setState({
       userNameError: null,
       usernamePwdError: null,
+      requiredUserName: false,
+      requiredPassword: false
     });
   }
   handleSubmit = event => {
     event.preventDefault();
-    if (!this._validateForm()) {
+    if (!this.validateForm()) {
       return;
     }
     this.setState({ isLoading: true });
@@ -107,8 +119,9 @@ class Login extends Component {
     return elm;
   }
   render() {
-    const { passwordError, userNameError, usernamePwdError } = this.state;
+    const { passwordError, userNameError, usernamePwdError, requiredUserName, requiredPassword } = this.state;
     return <div className="container loginWrapper">
+      <h1 id="headline">My Home Devices</h1>
         <div className="row">
           <div className="col-md-6 mx-auto">
             <div className="card rounded">
@@ -118,21 +131,21 @@ class Login extends Component {
               <div className="card-body">
                 <Form horizontal onSubmit={this.handleSubmit}>
                   <FormGroup controlId="email">
-                    <Col componentClass={ControlLabel} sm={5}>
-                      Username
-                    </Col>
                     <Col sm={10}>
-                      <FormControl className={`form-group ${this.errorClass(userNameError)}`} autoFocus type="email" required autoComplete="email" value={this.state.email} onChange={this.handleChange} placeholder="username or email" />
+                      <FormControl className={`form-group ${this.errorClass(userNameError)} inputElm`} autoFocus type="email" autoComplete="email" value={this.state.email} onChange={this.handleChange} placeholder="Email" />
                       {this.renderError("username")}
+                      {requiredUserName &&
+                        <span class="message">Required</span>
+                      }
                     </Col>
                   </FormGroup>
-                  <FormGroup controlId="password" className={`form-group ${this.errorClass(passwordError)}`}>
-                    <Col componentClass={ControlLabel} sm={5}>
-                      Password
-                    </Col>
+                  <FormGroup controlId="password" >
                     <Col sm={10}>
-                      <FormControl value={this.state.password} onChange={this.handleChange} type="password" required value={this.state.password} placeholder="password" />
+                      <FormControl value={this.state.password} className={`form-group ${this.errorClass(passwordError)} inputElm passwordInput`} onChange={this.handleChange} type="password" value={this.state.password} placeholder="Password" />
                       {this.renderError("password")}
+                      {requiredPassword &&
+                        <span class="message">Required</span>
+                      }
                     </Col>
                   </FormGroup>
                   {usernamePwdError &&

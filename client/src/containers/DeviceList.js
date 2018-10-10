@@ -1,15 +1,3 @@
-// TODO: onClickToggleStatus use bind instead
-// mention that EDIT is done on double click only
-// CHANGE deviocename to deviceName
-// GET RID OF EXTRA devices
-// GET RID OF UNNECESSARY ITEMS IN STATE
-// PUT BACK closeButton IN MODAL HEADER
-// ADD FormControl and labelControl in modal
-// CHANGE 'Paused' to 'paused' and same for 'unpaused'
-//  show spinner toggling status
-// how to get authenticated role
-// buttons paused/unpasuded curosor pointer
-
 import React, { Component } from "react";
 import { Button, Modal, ControlLabel, FormControl } from "react-bootstrap";
 import axios from "axios";
@@ -21,14 +9,22 @@ import "./DeviceList.css";
 class DeviceList extends Component {
   constructor(props) {
     super(props);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleDeviceStatusChange = this.handleDeviceStatusChange.bind(this);
+    this.saveNewDevice = this.saveNewDevice.bind(this);
   }
   state = {
     devices: null,
     showAddDeviceModal: false,
     newDeviceName: "",
-    newDeviceStatus: "Paused"
+    newDeviceStatus: "Paused",
+    deviceNameError: null,
+    viewer: false
   };
   componentDidMount() {
+    if (localStorage.getItem("userRole") === "view"){
+      this.setState({viewer: true})
+    }
     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem("authToken")}`;
     axios
       .get("/v1/devices/")
@@ -39,17 +35,18 @@ class DeviceList extends Component {
           });
         }
       })
-      .catch(error => {
-        // status code 500
-        // {"auth":false,"message":"Failed to authenticate token: TokenExpiredError: jwt expired"}
-        console.log(error);
+      .catch(response => {
+        if (response.response.status === 500){
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userRole');
+          this.props.history.push('/login');
+        }
       });
   }
   /**
    * adds new device
    */
   addNewDevice() {
-
     this.setState({ showAddDeviceModal: true });
   }
   /**
@@ -87,12 +84,31 @@ class DeviceList extends Component {
    * @param {*} rowIndex
    */
   statusCellButton(cell, row, enumObject, rowIndex) {
+    if (this.state.viewer){
+      let statusColor;
+      let lowerCell = cell.toLowerCase().charAt(0).toUpperCase() + cell.toLowerCase().slice(1);
+      if (cell === "PAUSED"){
+        statusColor = 'redStatus';
+      } else if (cell === "UNPAUSED"){
+        statusColor = 'greenStatus';
+      }
+      return (
+        <span className={statusColor}>{lowerCell}</span>
+      )
+    }
+    let status;
+    if (cell === 'PAUSED'){
+      status = 'Unpause';
+    }else if (cell === 'UNPAUSED'){
+      status = 'Pause';
+    }
     return (
       <button
         type="button"
+        className="status-btn"
         onClick={() => this.onClickToggleStatus(cell, row, rowIndex)}
       >
-        {cell.toUpperCase()}
+      {status}
       </button>
     );
   }
@@ -110,9 +126,7 @@ class DeviceList extends Component {
         className="btn btn-warning react-bs-table-del-btn"
         onClick={() => this.onClickDeleteDevices(cell, row, rowIndex)}
       >
-        <span>
-          <i className="glyphicon glyphicon-trash" />Delete
-        </span>
+        <span><i className="fa fa-trash" aria-hidden="true"></i></span>
       </button>
     );
   }
@@ -168,14 +182,36 @@ class DeviceList extends Component {
     this.setState({ newDeviceStatus: event.target.value });
   }
   /**
+   * closes 'add new device' modal
+   */
+  handleClose(){
+    this.setState({ showAddDeviceModal: false });
+  }
+  /**
+   * make sure that user enters a device name
+   */
+  validateModalData(){
+    if(this.state.newDeviceName === ""){
+      this.setState({deviceNameError: "Please enter a device name"});
+      return false;
+    }else{
+      this.setState({deviceNameError: ""});
+      return true;
+    }
+  }
+  /**
    * save new device
    * @param {*} event
    */
   saveNewDevice(event) {
+    if (!this.validateModalData()) {
+      return;
+    }
+    let deviceName = this.state.newDeviceName.toLowerCase().charAt(0).toUpperCase() + this.state.newDeviceName.toLowerCase().slice(1);
     axios
       .post("/v1/devices/", {
-        devicename: this.state.newDeviceName,
-        status: this.state.newDeviceStatus
+        devicename: deviceName,
+        status: this.state.newDeviceStatus.toUpperCase()
       })
       .then(response => {
         if (response.data.devicename) {
@@ -189,14 +225,20 @@ class DeviceList extends Component {
             devices: [...this.state.devices, newdevice]
           }));
           this.setState({ showAddDeviceModal: false });
+          this.setState({newDeviceName: ""});
+
         }
       })
       .catch(error => {
-        console.log(error);
-        this.setState({ showAddDeviceModal: false });
+        // if device already exists, show error
+        if (error.response.status === 409){
+          this.setState({deviceNameError: "Device already exists"});
+        }else{
+          this.setState({ showAddDeviceModal: false });
+        }
+        this.setState({newDeviceName: ""});
       });
   }
-
   render() {
     let role = localStorage.getItem("userRole");
     const devices = this.state.devices ? this.state.devices : null;
@@ -216,29 +258,33 @@ class DeviceList extends Component {
     ];
     const cellEditProp = {
       mode: "dbclick",
-      blxurToSave: true,
+      blurToSave: true,
       afterSaveCell: this.onAfterSaveCell
     };
     return ( <div>
       {this.state &&
         this.state.devices && (
           <div className="device-list-wrapper">
+            {role === "admin" && (
             <div className="row form-group">
               <div className="col-xs-6 col-sm-6 col-md-6 col-lg-8">
                 <div className="btn-group btn-group-sm" role="group">
                   <button
                     type="button"
                     onClick={this.addNewDevice.bind(this)}
-                    className="btn btn-info react-bs-table-add-btn "
+                    className="btn btn-info react-bs-table-add-btn action-btn"
                   >
-                    <span>
-                      <i className="glyphicon glyphicon-plus" />New
-                    </span>
+                    <span>Add New Device</span>
                   </button>
                 </div>
               </div>
             </div>
+          )}
+          {role === "admin" && (
+            <p className="info">* Please double click on device name to edit it</p>
+          )}
             <BootstrapTable
+            maxHeight="500px"
               cellEdit={cellEditProp}
               data={devices}
               tableHeaderClass="col-hidden"
@@ -249,6 +295,7 @@ class DeviceList extends Component {
               <TableHeaderColumn  dataField="devicename">
                 Device Name
               </TableHeaderColumn>
+
               <TableHeaderColumn
                 dataField="status"
                 editable={false}
@@ -260,13 +307,15 @@ class DeviceList extends Component {
                 dataField="button"
                 editable={false}
                 dataFormat={this.deleteButton.bind(this)}
+                hidden={this.state.viewer}
                 hiddenOnInsert
               >
-                Delete
+               Delete
               </TableHeaderColumn>
             </BootstrapTable>
             <Modal
         show={this.state.showAddDeviceModal}
+        onHide={this.handleClose}
         container={this}
       >
         <Modal.Header closeButton>
@@ -282,18 +331,15 @@ class DeviceList extends Component {
           type="text"
           value={this.state.newDeviceName}
           placeholder="Device Name"
-          onChange={this.handleDeviceNameChange.bind(this)}
-
-        />
+          onChange={this.handleDeviceNameChange.bind(this)}/>
               </div>
+              <div className="help-block">{this.state.deviceNameError}</div>
               <div className="form-group">
-                  {/* <label>Device Status</label> */}
                   <ControlLabel>Device Status</ControlLabel>
                   <FormControl
                       componentClass="select" placeholder="Select Status"
                       value={this.state.newDeviceStatus}
-                      onChange={this.handleDeviceStatusChange.bind(this)}
-                      >
+                      onChange={this.handleDeviceStatusChange}>
                     <option value="Paused">Paused</option>
                     <option value="Unpaused">Unpaused</option>
                   </FormControl>
@@ -301,16 +347,14 @@ class DeviceList extends Component {
           </div>
         </Modal.Body>
           <div className="modal-footer react-bs-table-inser-modal-footer">
-              <span>
-              <Button className="btn btn-primary btn-large centerButton" onClick={this.saveNewDevice.bind(this)}>Save</Button>
-              </span>
+              <Button bsStyle="link" onClick={this.handleClose}>Cancel</Button>
+              <Button className="btn btn-primary btn-large centerButton save-device-btn action-btn" onClick={this.saveNewDevice}>Save</Button>
           </div>
       </Modal>
           </div>
         )}
     </div>
   );
-
   }
 }
 export default DeviceList;

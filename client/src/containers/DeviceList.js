@@ -9,9 +9,13 @@ import "./DeviceList.css";
 class DeviceList extends Component {
   constructor(props) {
     super(props);
+    this.addNewDevice = this.addNewDevice.bind(this);
+    this.deleteButton = this.deleteButton.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleDeviceStatusChange = this.handleDeviceStatusChange.bind(this);
+    this.handleDeviceNameChange = this.handleDeviceNameChange.bind(this);
     this.saveNewDevice = this.saveNewDevice.bind(this);
+    this.statusCellButton = this.statusCellButton.bind(this);
   }
   state = {
     devices: null,
@@ -84,16 +88,20 @@ class DeviceList extends Component {
    * @param {*} rowIndex
    */
   statusCellButton(cell, row, enumObject, rowIndex) {
+    // status view only for user role ='view'
     if (this.state.viewer){
       let statusColor;
+      let statusIcon;
       let lowerCell = cell.toLowerCase().charAt(0).toUpperCase() + cell.toLowerCase().slice(1);
       if (cell === "PAUSED"){
         statusColor = 'redStatus';
+        statusIcon = 'fa fa-pause';
       } else if (cell === "UNPAUSED"){
         statusColor = 'greenStatus';
+        statusIcon = 'statusIcon fab fa-audible';
       }
       return (
-        <span className={statusColor}>{lowerCell}</span>
+        <div><i className={statusIcon}></i><span className={`statusCell ${statusColor}`}>{lowerCell}</span></div>
       )
     }
     let status;
@@ -271,7 +279,7 @@ class DeviceList extends Component {
                 <div className="btn-group btn-group-sm" role="group">
                   <button
                     type="button"
-                    onClick={this.addNewDevice.bind(this)}
+                    onClick={this.addNewDevice}
                     className="btn btn-info react-bs-table-add-btn action-btn"
                   >
                     <span>Add New Device</span>
@@ -284,7 +292,7 @@ class DeviceList extends Component {
             <p className="info">* Please double click on device name to edit it</p>
           )}
             <BootstrapTable
-            maxHeight="500px"
+              maxHeight="800px"
               cellEdit={cellEditProp}
               data={devices}
               tableHeaderClass="col-hidden"
@@ -299,14 +307,14 @@ class DeviceList extends Component {
               <TableHeaderColumn
                 dataField="status"
                 editable={false}
-                dataFormat={this.statusCellButton.bind(this)}
+                dataFormat={this.statusCellButton}
               >
                 Device Status
               </TableHeaderColumn>
               <TableHeaderColumn
                 dataField="button"
                 editable={false}
-                dataFormat={this.deleteButton.bind(this)}
+                dataFormat={this.deleteButton}
                 hidden={this.state.viewer}
                 hiddenOnInsert
               >
@@ -331,7 +339,7 @@ class DeviceList extends Component {
           type="text"
           value={this.state.newDeviceName}
           placeholder="Device Name"
-          onChange={this.handleDeviceNameChange.bind(this)}/>
+          onChange={this.handleDeviceNameChange}/>
               </div>
               <div className="help-block">{this.state.deviceNameError}</div>
               <div className="form-group">

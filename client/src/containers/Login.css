@@ -9,8 +9,10 @@
   }
 }
 .loginWrapper {
+  background:linear-gradient(to bottom, #5b5b77 50%, #29283b 100%);
   font-family: "Niramit", serif;
   padding-top: 120px;
+  height:900px;
 }
 .has-error {
   border-bottom: 2px solid #ef6488 !important;

@@ -5,7 +5,7 @@ html, body{
 }
 .App{
   background:linear-gradient(to bottom, #5b5b77 50%, #29283b 100%);
-  height:900px;
+  min-height:900px;
 }
 .navbar{
   font-family: "Niramit", serif;

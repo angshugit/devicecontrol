@@ -1,7 +1,3 @@
-// TODO: see if u can remnove isLoading
-// and check loaderbutton
-    //TODO: set timeout 1000 ms to show loading spinner
-
 import React, { Component } from "react";
 import {
   Form,
@@ -12,7 +8,6 @@ import {
   Button
 } from "react-bootstrap";
 import axios from "axios";
-// import LoaderButton from "../components/LoaderButton";
 import "./Login.css";
 
 class Login extends Component {
@@ -23,7 +18,6 @@ class Login extends Component {
      localStorage.removeItem('userRole');
     }
     this.state = {
-      isLoading: false,
       email: "",
       password: "",
       passwordError: null,
@@ -71,7 +65,6 @@ class Login extends Component {
     if (!this.validateForm()) {
       return;
     }
-    this.setState({ isLoading: true });
     axios
       .post("/v1/session/", {
         username: this.state.email,
@@ -121,6 +114,7 @@ class Login extends Component {
   render() {
     const { passwordError, userNameError, usernamePwdError, requiredUserName, requiredPassword } = this.state;
     return <div className="container loginWrapper">
+{!!this.state.loading && <p>I am loading for {this.state.loading} more seconds</p>}
       <h1 id="headline">My Home Devices</h1>
         <div className="row">
           <div className="col-md-6 mx-auto">
